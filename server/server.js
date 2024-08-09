@@ -1,24 +1,27 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import giftsRouter from "./routes/gifts.js";
+import bossesRouter from "./routes/bosses.js";
 
 const app = express();
 
-app.use("/public", express.static("../client/public"));
-app.use("/scripts", express.static("../client/public/scripts"));
+app.use("/pages", express.static("../client/pages"));
+app.use("/assets", express.static("../client/assets"));
+app.use("/styles", express.static("../client/styles"));
+app.use("/scripts", express.static("../client/scripts"));
 
-app.use("/gifts", giftsRouter);
+app.use("/pages/boss/:id", (_, res) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
 
-app.get("/", (req, res) => {
-  res
-    .status(200)
-    .send(
-      '<h1 style="text-align: center; margin-top: 50px;">UnEarthed API</h1>'
-    );
+  res.sendFile(path.resolve(__dirname, "../client/pages/boss.html"));
 });
 
-const PORT = process.env.PORT || 3001;
+app.use("/bosses", bossesRouter);
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server listening on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
